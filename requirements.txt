@@ -1,0 +1,4 @@
+PyAutoGUI==0.9.52
+pywin32==300
+PyGetWindow==0.0.9
+pyperclip==1.8.1

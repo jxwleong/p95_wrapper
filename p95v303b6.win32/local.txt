@@ -1,5 +1,5 @@
-OldCpuSpeed=2963
-NewCpuSpeedCount=1
+OldCpuSpeed=2862
+NewCpuSpeedCount=3
 NewCpuSpeed=2592
 RollingAverage=1000
 RollingAverageIsFromV27=1

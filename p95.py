@@ -1,17 +1,9 @@
 import argparse
 import os
 import subprocess
+import sys
 import time
 
-
-import pyperclip 
-import win32con
-import win32gui
-import win32process
-import pyautogui
-import pygetwindow as gw
-
-from win32gui import FindWindow, GetWindowRect
 from ctypes import *
 
 def remove_if_exists(filename):
@@ -20,6 +12,16 @@ def remove_if_exists(filename):
 
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, ROOT_DIR)
+
+from pyLib import pyperclip
+from pyLib.win32 import win32gui
+from pyLib import pyautogui
+from pyLib import pygetwindow as gw
+
+from win32gui import FindWindow, GetWindowRect
+
+
 P95_EXE_PATH = os.path.join(ROOT_DIR, "p95v303b6.win32", "prime95.exe")
 P95_RESULTS_TXT = os.path.join(ROOT_DIR, "p95v303b6.win32", "results.txt")
 P95_TIMEOUT = 60
@@ -35,7 +37,9 @@ args = parser.parse_args()
 if args.time is not None:
       P95_TIMEOUT = args.time
 
-
+kill_p95 = subprocess.Popen("taskkill /IM \"prime95.exe\" /F")
+print(kill_p95)
+time.sleep(1)
 p95_process = subprocess.Popen([P95_EXE_PATH, '-t'])
 time.sleep(1)
 
@@ -59,8 +63,9 @@ x, y, _, _ = window_rect
 time.sleep(P95_TIMEOUT)
 pyperclip.copy("")
 ok = windll.user32.BlockInput(True) #enable block
-win32gui.SetForegroundWindow(window_handle)
 time.sleep(1)
+win32gui.SetForegroundWindow(window_handle)
+time.sleep(2)
 pyautogui.click(x=x+window_x, y=y+window_y)
 time.sleep(1)
 pyautogui.click(x=x+edit_x, y=y+edit_y)
