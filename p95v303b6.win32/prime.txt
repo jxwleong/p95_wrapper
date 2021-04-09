@@ -10,12 +10,14 @@ TortureMem=2000
 TortureTime=6
 TortureWeak=1048576
 MergeWindows=12
-Left=1484
-Top=188
-Right=2444
-Bottom=677
-W1=0 0 942 204 0 -1 -1 -8 -31
-W2=0 204 942 409 0 -1 -1 -8 -31
+Left=1425
+Top=148
+Right=2385
+Bottom=642
+W1=0 0 942 207 0 -1 -1 -1 -1
+W2=0 207 942 414 0 -1 -1 -1 -1
+
+
 
 [PrimeNet]
 Debug=0
