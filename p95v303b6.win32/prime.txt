@@ -2,22 +2,27 @@ V24OptionsConverted=1
 WorkPreference=0
 V30OptionsConverted=1
 WGUID_version=2
+Left=965
+Top=220
+Right=2201
+Bottom=725
+W1=0 0 1218 212 0 -1 -1 -1 -1
+W2=0 212 1218 425 0 -1 -1 -1 -1
+W3=0 150 1902 226 0 -1 -1 -1 -1
+W4=0 226 1902 301 0 -1 -1 -1 -1
+W5=0 301 1902 377 0 -1 -1 -1 -1
+W6=0 377 1902 452 0 -1 -1 -1 -1
+W7=0 452 1902 528 0 -1 -1 -1 -1
+W8=0 528 1902 603 0 -1 -1 -1 -1
+W9=0 603 1902 679 0 -1 -1 -1 -1
 StressTester=1
 UsePrimenet=0
-MinTortureFFT=22
-MaxTortureFFT=64
-TortureMem=8
+MergeWindows=12
+MinTortureFFT=2
+MaxTortureFFT=4
+TortureMem=2000
 TortureTime=6
 TortureWeak=1048576
-MergeWindows=12
-Left=1425
-Top=148
-Right=2385
-Bottom=642
-W1=0 0 942 207 0 -1 -1 -1 -1
-W2=0 207 942 414 0 -1 -1 -1 -1
-
-
 
 [PrimeNet]
 Debug=0
