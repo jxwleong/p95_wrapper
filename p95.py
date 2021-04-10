@@ -54,7 +54,11 @@ copy_y = 65
 window_x = 30
 window_y = 280
 
+test_x = 25
+test_y = 40
 
+stop_x = 45
+stop_y = 165
 
 
 time.sleep(P95_TIMEOUT)
@@ -69,11 +73,11 @@ ok = windll.user32.BlockInput(True) #enable block
 time.sleep(1)
 win32gui.SetForegroundWindow(window_handle)
 time.sleep(2)
-print(win_y/2)
+pyautogui.click(x=x+test_x, y=y+test_y)
+pyautogui.click(x=x+stop_x, y=y+stop_y)
+pyautogui.press('enter')
 pyautogui.click(x=x+window_x, y=y+win_y/2.5)
-time.sleep(2)
 pyautogui.click(x=x+edit_x, y=y+edit_y)
-time.sleep(2)
 pyautogui.click(x=x+copy_x, y=y+copy_y)
 ok = windll.user32.BlockInput(False) #disable block 
 
