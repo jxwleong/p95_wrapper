@@ -6,10 +6,6 @@ import time
 
 from ctypes import *
 
-def remove_if_exists(filename):
-    if os.path.exists(filename):
-        os.remove(filename)
-
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, ROOT_DIR)
@@ -25,6 +21,10 @@ from win32gui import FindWindow, GetWindowRect
 P95_EXE_PATH = os.path.join(ROOT_DIR, "p95v303b6.win32", "prime95.exe")
 P95_RESULTS_TXT = os.path.join(ROOT_DIR, "p95v303b6.win32", "results.txt")
 P95_TIMEOUT = 60
+
+def remove_if_exists(filename):
+    if os.path.exists(filename):
+        os.remove(filename)
 
 remove_if_exists(P95_RESULTS_TXT)
 
