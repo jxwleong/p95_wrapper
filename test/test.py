@@ -9,24 +9,21 @@ import config
 
 LOCAL_TXT = config.LOCAL_TXT_TEMPLATE
 LOCAL_TXT = """
-OldCpuSpeed=2965
-NewCpuSpeedCount=1
-NewCpuSpeed=2592
-RollingAverage=1000
-RollingAverageIsFromV27=1
-CoresPerTest=4
-ComputerGUID=9c32b9c9d257e3082e344c2e7317fb1f
-RollingStartTime=0
-
+MinTortureFFT=4
+MaxTortureFFT=8192
+TortureMem=2000
+TortureTime=6
 """
 # Attempt to change the worker threads
 
-worker_threads = "".join(["WorkerThreads=", 
-                        str(config.SYSTEM_CONFIG["NUMBER_OF_LOGICAL_CORE"])])
-print(worker_threads)
-r1 = re.findall("WorkerThreads=\\s*", LOCAL_TXT)
+
+
+r1 = re.findall("MaxTortureFFT=\\d*", LOCAL_TXT)
+print(r1)
 if len(r1) == 0:
     print("NOOOO")
-    LOCAL_TXT = LOCAL_TXT + worker_threads
+    LOCAL_TXT = LOCAL_TXT + "".join(["MaxTortureFFT=4444"])
     print(LOCAL_TXT)
-print(r1)
+else:
+    LOCAL_TXT = re.sub("MaxTortureFFT=\\d*", "MaxTortureFFT=123",LOCAL_TXT)
+    print(LOCAL_TXT)
