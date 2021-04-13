@@ -16,6 +16,7 @@ sys.path.append(PYLIB_PATH)
 
 from pyLib import pyperclip
 from pyLib import win32
+from pyLib.tqdm import tqdm
 #import pyLib.win32.win32gui
 from pyLib import pyautogui
 from pyLib import pygetwindow as gw
@@ -81,9 +82,9 @@ END_TIME = START_TIME + P95_TIMEOUT
 print(f"\nSTART TIME: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(START_TIME))}")
 print(f"ESTIMATED END TIME: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(END_TIME))}")
 
-print(f"Delaying for {P95_TIMEOUT} seconds")
-time.sleep(P95_TIMEOUT)
-print("Times UP!")
+for _ in tqdm(range(P95_TIMEOUT), desc="Progress", dynamic_ncols =True):
+    time.sleep(1)
+
 # FindWindow takes the Window Class name (can be None if unknown), and the window's display text. 
 p95 =  gw.getWindowsWithTitle(P95_PRIME_WINDOW_NAME)[0]
 ##window_rect   = GetWindowRect(window_handle)
@@ -133,7 +134,7 @@ subprocess.Popen(f"taskkill /F /PID {p95_process.pid}")
 time.sleep(1)
 p95_log_str = pyperclip.paste()
 
-print("Generating prime95.log...")
+print(f"Generating prime95.log at {os.path.join(os.getcwd(), 'prime95.log')}")
 with open(os.path.join(os.getcwd(), "prime95.log"), "w") as p95_log:
   p95_log_str = p95_log_str.replace("\n", "")
   p95_log.write(p95_log_str)
