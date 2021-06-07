@@ -220,7 +220,7 @@ EndFunc
 
 Func _PRIME_95_GET_LOG($logPath="prime95.log")
    ; https://www.autoitscript.com/forum/topic/117880-how-to-delete-contents-of-a-text-file-s/
-   Sleep(250)
+   Sleep(350)
    Send("{ENTER}")
    $hFO = FileOpen($logPath, 2)
    FileWrite($hFO, "")

@@ -1,4 +1,4 @@
-OldCpuSpeed=2965
+OldCpuSpeed=2872
 NewCpuSpeedCount=1
 NewCpuSpeed=2592
 RollingAverage=1000
