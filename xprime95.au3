@@ -3,6 +3,7 @@
 #include <WinAPIProc.au3>
 #include <MsgBoxConstants.au3>
 
+#AutoIt3Wrapper_Change2CUI=y
 ;=========================CONSTANT========================
 $PRIME95_PATH = @ScriptDir & "\p95v303b6.win32\prime95.exe"
 ConsoleWrite ( $PRIME95_PATH & @CRLF)
@@ -320,11 +321,14 @@ _TORTURE_TEST_OK($prime95Hwnd)
 ; This function set $mainHwnd, $childHwnd and $WorkerWinHwnd
 getWinHwnd($PID)
 WinWaitActive ($mainHwnd)
+;WinSetOnTop ($mainHwnd, "", $WINDOWS_ONTOP)
 BlockInput($BI_ENABLE)
 
 Sleep(10000)
 
 BlockInput($BI_DISABLE)
+WinActivate($mainHwnd, "")
+Sleep(100)
 _PRIME_95_MENU_ITEM_TEST()
 _PRIME_95_STOP_ALL_WORKER()
 _PRIME_95_MENU_ITEM_EDIT()
