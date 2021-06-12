@@ -3,6 +3,7 @@
 #include <WinAPIProc.au3>
 #include <MsgBoxConstants.au3>
 
+
 #AutoIt3Wrapper_Change2CUI=y
 ;=========================CONSTANT========================
 $PRIME95_PATH = @ScriptDir & "\p95v303b6.win32\prime95.exe"
