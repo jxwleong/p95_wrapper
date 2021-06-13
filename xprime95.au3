@@ -2,13 +2,23 @@
 #include <WinAPISys.au3>
 #include <WinAPIProc.au3>
 #include <MsgBoxConstants.au3>
-
+#include <File.au3>
+#include <Logging.au3>
 
 #AutoIt3Wrapper_Change2CUI=y
 ;=========================CONSTANT========================
-$PRIME95_PATH = @ScriptDir & "\p95v303b6.win32\prime95.exe"
-ConsoleWrite ( $PRIME95_PATH & @CRLF)
+; https://www.autoitscript.com/autoit3/docs/libfunctions/_PathSplit.htm
+Local $scriptDrive = ""
+Local $scriptDir = ""
+Local $scriptFileName = ""
+Local $scriptExtension = ""
+_PathSplit(@ScriptFullPath, $scriptDrive, $scriptDir, $scriptFileName, $scriptExtension)
+Local $logFile = FileOpen($scriptFileName & ".log", $WRITE_MODE_ERASE_FILE_CONTENT)
+
 $CMD_TO_KILL_PRIME95 = @ComSpec & " /C " & " TASKKILL /F /IM Prime95.exe"
+$PRIME95_PATH = @ScriptDir & "\p95v303b6.win32\prime95.exe"
+$TIMEOUT_IN_MS=10000
+_Log ( "Prime95 exe path : " & $PRIME95_PATH)
 
 #comments-start
 https://www.autoitscript.com/autoit3/docs/libfunctions/_WinAPI_EnumProcessWindows.htm
@@ -307,14 +317,16 @@ EndFunc   ;==>Example
 ;~ ;Send("2")
 
 
-
+_Log("Call Cmd : '" & $CMD_TO_KILL_PRIME95 & "'")
 RunWait($CMD_TO_KILL_PRIME95, "", @SW_HIDE) ;~ Runs command hidden
 $pid = runExe($PRIME95_PATH)
+_Log("Prime95 launched with PID " & $pid)
 ; This is the "Torture test" handler
 $prime95Hwnd = _GetHwndFromPID($pid)
 
 WinWaitActive ("Run a Torture Test")
 ;WinSetOnTop("Run a Torture Test", "", $WINDOWS_ONTOP)
+_Log("Disbaling user input (keyboard and mouse)")
 BlockInput($BI_DISABLE)
 
 _TORTURE_TEST_OK($prime95Hwnd)
@@ -323,20 +335,24 @@ _TORTURE_TEST_OK($prime95Hwnd)
 getWinHwnd($PID)
 WinWaitActive ($mainHwnd)
 ;WinSetOnTop ($mainHwnd, "", $WINDOWS_ONTOP)
+_Log("Enabling user input (keyboard and mouse)")
 BlockInput($BI_ENABLE)
 
-Sleep(10000)
-
+Sleep($TIMEOUT_IN_MS)
+_Log($TIMEOUT_IN_MS & " ms is up!")
+_Log("Disbaling user input (keyboard and mouse)")
 BlockInput($BI_DISABLE)
 WinActivate($mainHwnd, "")
 Sleep(100)
+_Log("Copying workers log...")
 _PRIME_95_MENU_ITEM_TEST()
 _PRIME_95_STOP_ALL_WORKER()
 _PRIME_95_MENU_ITEM_EDIT()
 _PRIME_95_GET_LOG()
 BlockInput($BI_ENABLE)
 
-ConsoleWrite ("KILL!" & @CRLF)
+_Log ("Killing prime95.exe")
+_Log("Call Cmd : '" & $CMD_TO_KILL_PRIME95 & "'")
 RunWait($CMD_TO_KILL_PRIME95, "", @SW_HIDE) ;~ Runs command hidden
 
 
