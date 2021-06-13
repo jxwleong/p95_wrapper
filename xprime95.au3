@@ -17,8 +17,19 @@ Local $logFile = FileOpen($scriptFileName & ".log", $WRITE_MODE_ERASE_FILE_CONTE
 
 $CMD_TO_KILL_PRIME95 = @ComSpec & " /C " & " TASKKILL /F /IM Prime95.exe"
 $PRIME95_PATH = @ScriptDir & "\p95v303b6.win32\prime95.exe"
-$TIMEOUT_IN_MS=10000
-_Log ( "Prime95 exe path : " & $PRIME95_PATH)
+$tortureTestType = "BLEND"
+$timeout = 10000
+
+; https://www.autoitscript.com/forum/topic/794-parsing-command-line-args/
+$usage = "Usage: " & @ScriptName & "	[OPTIONS]" & @LF & @LF
+$usage = $usage & "Options:" & @LF
+$usage = $usage & "    /c, /config TEST_TYPE  		Prime95 Torture Test Type. "& @LF
+$usage = $usage & "    				  	    1. SMALL                   "& @LF
+$usage = $usage & "    				  	    2. INPLACE                 "& @LF
+$usage = $usage & "    				  	    3. BLEND                   "& @LF
+$usage = $usage & "    				  	    4. CUSTOM                  "& @LF
+$usage = $usage & "    /t, /timeout SECONDS 		Timeout (seconds) for Prime95 to run." & @LF
+$usage = $usage & "    /h, /help, /?  			Display this messasge.               " & @LF
 
 #comments-start
 https://www.autoitscript.com/autoit3/docs/libfunctions/_WinAPI_EnumProcessWindows.htm
@@ -201,6 +212,21 @@ Func _TORTURE_TEST_OK($hWnd)
 
 EndFunc
 
+; Automate the selection of torture test type
+; $tortureTestType from command-line or default (BLEND)
+Func _SELECT_TORTURE_TEST($TestType=$tortureTestType)
+   Switch $TestType
+	  Case "SMALL"
+		 _TORTURE_TEST_SMALL_FFT()
+	  Case "INPLACE"
+		 _TORTURE_TEST_LARGE_FFT()
+	  Case "BLEND"
+		 _TORTURE_TEST_BLEND_FFT()
+	  Case "INPPLACE"
+		 _TORTURE_TEST_CUSTOM_FFT()
+   EndSwitch
+EndFunc
+
 
 ;====================MENU ITEM========================
 Func _PRIME_95_MENU_ITEM_TEST()
@@ -279,6 +305,59 @@ Func getWinHwnd($pid)
    $WorkerWinHwnd = $childHwnd[$2D_ARRAY_INDEX_WORKER_WINDOW][$2D_ARRAY_INDEX_WINDOW_HANDLE]
 EndFunc
 
+;================CMD Line=============
+; set $timeout
+; Check if the string is digit (0-9)
+; Expect user key-in as seconds so will multiple by 1000
+; to get ms for Sleep(ms)
+Func SetTimeout($timeoutInseconds)
+   If StringIsDigit($timeoutInseconds) Then
+	  $timeout = Number($timeoutInseconds) * Number(1000)
+
+   Else
+	  Exit 1
+   EndIf
+EndFunc
+; set $tortureTestType
+; Check if the $testType is either
+; SMALL, INPLACE, BLEND or CUSTOM
+Func SetTortureTestType($testType)
+   $cappedTestType = StringUpper($testType)
+
+   If $cappedTestType = "SMALL" Or $cappedTestType = "INPLACE" Or _
+	  $cappedTestType = "BLEND" Or $cappedTestType = "CUSTOM" Then
+	  ConsoleWrite($testType & @CRLF)
+	  $tortureTestType=$cappedTestType
+
+   Else
+	  _Log("Invalid Torture Test Type: " & $testType & @CRLF)
+	  Exit 1
+   EndIf
+EndFunc
+
+
+; retrieve commandline parameters
+For $x = 1 to $CmdLine[0]
+   Select
+   Case $CmdLine[$x] = "/c" Or $CmdLine[$x] = "/config"
+		 $x = $x + 1	; Increment the args
+         $tortureTestType=$CmdLine[$x]
+		 SetTortureTestType($tortureTestType)
+         ;writelog(" -- Running in Batch mode.")
+	  Case $CmdLine[$x] = "/t" Or $CmdLine[$x] = "/timeout"
+		 $x = $x + 1	; Increment the args
+		 $CmdTimeouot=$CmdLine[$x]
+         SetTimeout($CmdTimeouot)
+      Case $CmdLine[$x] = "/?" Or $CmdLine[$x] = "/h" Or $CmdLine[$x] = "/help"
+		 ConsoleWrite($usage)
+         Exit 0
+      Case Else
+		 ConsoleWrite($usage)
+         Exit 1
+   EndSelect
+Next
+
+
 ;=================MISC================
 Func runExe($exe_path)
    Local $PID = Run($exe_path, "")
@@ -317,6 +396,7 @@ EndFunc   ;==>Example
 ;~ ;Send("2")
 
 
+_Log ( "Prime95 exe path : " & $PRIME95_PATH)
 _Log("Call Cmd : '" & $CMD_TO_KILL_PRIME95 & "'")
 RunWait($CMD_TO_KILL_PRIME95, "", @SW_HIDE) ;~ Runs command hidden
 $pid = runExe($PRIME95_PATH)
@@ -329,6 +409,8 @@ WinWaitActive ("Run a Torture Test")
 _Log("Disbaling user input (keyboard and mouse)")
 BlockInput($BI_DISABLE)
 
+_SELECT_TORTURE_TEST()
+Sleep(1000)	; To see the selection before clicking "OK"
 _TORTURE_TEST_OK($prime95Hwnd)
 
 ; This function set $mainHwnd, $childHwnd and $WorkerWinHwnd
@@ -338,8 +420,8 @@ WinWaitActive ($mainHwnd)
 _Log("Enabling user input (keyboard and mouse)")
 BlockInput($BI_ENABLE)
 
-Sleep($TIMEOUT_IN_MS)
-_Log($TIMEOUT_IN_MS & " ms is up!")
+Sleep($timeout)
+_Log(( Number($timeout) / Number(1000)) & " seconds is up!")
 _Log("Disbaling user input (keyboard and mouse)")
 BlockInput($BI_DISABLE)
 WinActivate($mainHwnd, "")
